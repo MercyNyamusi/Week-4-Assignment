@@ -1,70 +1,187 @@
-def count_wrongs(count):
+def repeat(function, list1):
     """
-    function to tell the player the number of mistakes made
-    :param count: the number of wrong answers
+   function to ask the user whether they would like to repeat the operation or not
+   :param function: the operation being carried out
+   :param list1: list of cars
 
-    """
-    if count == 0:
-        print("Congratulations!!!Your man lives.")
-    elif count == 1:
-        print(f"Your man lives! You made {count} mistake")
-    elif count < 6:
-        print(f"Your man lives! You made {count} mistakes")
+   """
+    response = input("Do you wish to try again?(Y/N)").lower()
+    if response == 'y' or response == 'yes' or response == 'yeah':
+        x = function(list1)
+    elif response == 'n' or response == 'no':
+        x = list1
     else:
-        print(f"Sorry your man is dead:( You made {count} mistakes")
+        print("Invalid Input. Please try again")
+        repeat(function, list1)
+    return x
 
 
-def quiz():
+def add_new_entry(existing_list):
     """
-    function that takes the players answer, compares it to the correct answer
-    and counts the number of wrong answers given
+        function to add new car entries to records
+        :param existing_list: list of cars already in inventory
+
     """
-    wrong_count = 0
-    # a dictionary of the question numbers and the questions asked during the game
-    questions = {"Question 1": "When was ALU founded?",
-                 "Question 2": "Who is the CEO of ALU?",
-                 "Question 3": "Where are ALU campuses?(Please use 'and' as the conjunction)",
-                 "Question 4": "How many campuses does ALU have?",
-                 "Question 5": "What is the name of ALU Rwanda’s Dean?",
-                 "Question 6": "Who is in charge of Student Life?",
-                 "Question 7": "What is the name of our Lab?",
-                 "Question 8": "How many students do we have in Year 2 CS?",
-                 "Question 9": "How many degrees does ALU offer?",
-                 "Question 10": "Where are the headquarters of ALU?"}
-    # a dictionary of the question numbers and the answers to the questions asked during the game
-    answers = {"Question 1": "2015", "Question 2": "fredswaniker",
-               "Question 3": ["rwandaandmauritius", "mauritiusandrwanda"],
-               "Question 4": "2", "Question 5": "mimimutoni", "Question 6": "silaogidi", "Question 7": "fablab",
-               "Question 8": "90", "Question 9": "8", "Question 10": "mauritius"}
-    # a loop to go through the questions and compare the user input to the given answers
-    for i in questions:
-        # removes all spaces in the user input and converts i to lower case
-        ans = input(i + "\n" + questions[i]).strip().lower().split()
-        # concatenates the elements of the list while removing all spaces
-        formatted_ans = "".join(ans)
-        # checks whether answer by user is correct by comparing it to the provided answer
-        if i == "Question 3" and (formatted_ans == answers[i][0] or formatted_ans == answers[i][1]):
-            print("CORRECT")
-        elif formatted_ans == answers[i]:
-            print("CORRECT")
-        else:
-            print("You're hanging the man")
-            wrong_count += 1
-        # checks if user has made six mistakes
-        if wrong_count > 5:
+    car_plate = input("Please input the car's number plate:")
+    for i in range(len(existing_list)):
+        # checks whether record already exists
+        if existing_list[i]["Car_plate"] == car_plate:
+            print(f"Car with {car_plate} already exists")
+            x = repeat(add_new_entry, existing_list)
+            return x
+    # takes details of the new entry as input
+    car_model = input("Please input the model of the car:")
+    year_of_release = input("Please input the year the car is released:")
+    year_of_acquisition = input("Please input the year the car was acquired:")
+    car_revenue = input("Please input the money made from the car:")
+    number_of_rents = input("Please input the number of times the car has been rented since acquisition:")
+    existing_list.append(
+        {"Car_plate": car_plate, "Model": car_model, "Year_of_release": year_of_release,
+         "Year_of_acquisition": year_of_acquisition,
+         "revenue_generated": car_revenue, "number_of_times_rented": number_of_rents})
+
+    x = existing_list
+    return x
+
+
+def remove_entry(existing_list):
+    """
+        function to remove entry from list
+        :param existing_list: list of cars already in inventory
+
+    """
+    count = 0
+    index = 0
+    car_remove = input("Please enter the number plate of the car you wish to remove:")
+    for i in range(len(existing_list)):
+        # checks whether entry exists
+        if existing_list[i]["Car_plate"] == car_remove:
+            index = i
+            count += 1
             break
-    # calls the count_wrongs function with the number of mistakes as the argument
-    count_wrongs(wrong_count)
+    if count == 0:
+        print("Sorry, our records do not have a car matching that plate.")
+        x = repeat(remove_entry, existing_list)
+        return x
+    else:
+        existing_list.pop(index)
+        return existing_list
 
 
-def hangman_game():
+def count_car_rented(existing_list):
     """
-    function to start the game
+        function to count the number of times a car has been rented
+        :param existing_list: list of cars already in inventory
 
     """
-    print("Welcome to ALU Hangman!!!\nMay the games begin!!")
-    quiz()
-    print("Thank you for playing. See you next time!!")
+    elem_count = 0
+    x = 0
+    car_rents = input("Please enter the number plate of the car you wish to inquire:")
+    for i in range(len(existing_list)):
+        # checks whether entry exists
+        if existing_list[i]["Car_plate"] == car_rents:
+            x = existing_list[i]["number_of_times_rented"]
+            elem_count += 1
+    if elem_count == 0:
+        print("Sorry, our records do not have a car matching that plate.")
+        x = repeat(count_car_rented, existing_list)
+    return x
 
 
-hangman_game()
+def revenue_generated(existing_list):
+    """
+        function to calculate amount of revenue generated from renting a car
+        :param existing_list: list of cars already in inventory
+
+    """
+    elem_count = 0
+    x = 0
+    car_revenue = input("Please enter the number plate of the car you wish to inquire:")
+    for i in range(len(existing_list)):
+        # checks whether entry exists
+        if existing_list[i]["Car_plate"] == car_revenue:
+            x = existing_list[i]["revenue_generated"]
+            elem_count += 1
+    if elem_count == 0:
+        print("Sorry, our records do not have a car matching that plate.")
+        x = repeat(revenue_generated, existing_list)
+
+    return x
+
+
+def rent_car(existing_list):
+    """
+        function to allow user to rent a car
+        updates the revenue amount and the number of times a car has been rented
+        :param existing_list: list of already existing cars
+
+    """
+    elem_count = 0
+    car_rents = input("Please enter the number plate of the car you wish to rent:")
+    car_revenue = int(input("Please enter the revenue to be generated from the renting:"))
+    for i in range(len(existing_list)):
+        # checks whether entry exists
+        if existing_list[i]["Car_plate"] == car_rents:
+            existing_list[i]["number_of_times_rented"] += 1
+            existing_list[i]["revenue_generated"] += car_revenue
+            elem_count += 1
+    if elem_count == 0:
+        print("Sorry, our records do not have a car matching that plate.")
+        x = repeat(rent_car, existing_list)
+        return x
+    else:
+        print(f"You have successfully rented car with the number plate: {car_rents}")
+        return existing_list
+
+
+def display(existing_list):
+    return existing_list
+
+
+# list of dictionaries where each dictionary contains info about the first 5 cars
+existing_cars = [{"Car_plate": "KBC 456T", "Model": "Benz", "Year_of_release": 2008, "Year_of_acquisition": 2011,
+                  "revenue_generated": 45000, "number_of_times_rented": 20},
+                 {"Car_plate": "KAZ 135M", "Model": "Audi", "Year_of_release": 2019, "Year_of_acquisition": 2019,
+                  "revenue_generated": 3000, "number_of_times_rented": 6},
+                 {"Car_plate": "KEB 897Y", "Model": "Wish", "Year_of_release": 2016, "Year_of_acquisition": 2017,
+                  "revenue_generated": 30000, "number_of_times_rented": 16},
+                 {"Car_plate": "KCA 223K", "Model": "Land Cruiser", "Year_of_release": 2016,
+                  "Year_of_acquisition": 2020,
+                  "revenue_generated": 8000, "number_of_times_rented": 10},
+                 {"Car_plate": "KPM 478P", "Model": "BMW", "Year_of_release": 2019, "Year_of_acquisition": 2021,
+                  "revenue_generated": 500, "number_of_times_rented": 4}]
+
+
+# allows users to choose the operation they wish to perform
+def task_choice():
+    user_input = int(
+        input("Welcome to Omondi Car Shop Record System\nPlease select the operation you wish to perform.\n"
+              "1.Add a new car to the collection\n"
+              "2.Rent a car\n"
+              "3.Remove a car from the collection\n"
+              "4.Count the number of times a car has been rented out\n"
+              "5.Count the amount of revenue generated from a car\n"
+              "6.Display existing list of cars\n"))
+
+    if user_input == 1:
+        print("New list:", add_new_entry(existing_cars))
+    elif user_input == 2:
+        print("New list:", rent_car(existing_cars))
+    elif user_input == 3:
+        print("New list:", remove_entry(existing_cars))
+    elif user_input == 4:
+        print("Number of times rented:", count_car_rented(existing_cars))
+    elif user_input == 5:
+        print("revenue generated", revenue_generated(existing_cars))
+    elif user_input == 6:
+        print("Existing cars:", display(existing_cars))
+    else:
+        print("Please enter a valid option")
+    response = input("Do you wish to perform another operation?(Y/N)").lower()
+    if response == 'y':
+        task_choice()
+    elif response == 'n':
+        return
+
+
+task_choice()
